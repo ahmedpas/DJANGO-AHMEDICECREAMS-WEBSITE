@@ -1,0 +1,1082 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock title %}
+
+{% block body %}
+<!-- Hero Video Carousel -->
+<section class="hero-carousel">
+  <div class="container-fluid px-0">
+    <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel" data-bs-wrap="true">
+      <div class="carousel-inner">
+
+        <!-- Carousel Item 1 -->
+        <div class="carousel-item active">
+          <video class="hero-banner" autoplay muted loop preload="auto">
+            <source src="/static/1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <div class="carousel-caption">
+            <div class="caption-content">
+              <h5>🍫 Dive Into Decadence</h5>
+              <p>Indulge in our rich, velvety chocolate creations — made to melt your heart.</p>
+              <a href="#products" class="btn btn-primary carousel-cta">Explore Flavors</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Carousel Item 2 -->
+        <div class="carousel-item">
+          <video class="hero-banner" autoplay muted loop preload="auto">
+            <source src="/static/2.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <div class="carousel-caption">
+            <div class="caption-content">
+              <h5>😊 Joy in Every Scoop</h5>
+              <p>From kids to grown-ups — our ice creams spread smiles across all ages.</p>
+              <a href="#products" class="btn btn-primary carousel-cta">Shop Now</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Carousel Item 3 -->
+        <div class="carousel-item">
+          <video class="hero-banner" autoplay muted loop preload="auto">
+            <source src="/static/3.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <div class="carousel-caption">
+            <div class="caption-content">
+              <h5>🎨 Crafted With Love, Topped With Delight</h5>
+              <p>Watch the magic happen — handcrafted flavors, customized your way.</p>
+              <a href="{% url 'book_services' %}" class="btn btn-primary carousel-cta">Book Services</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      
+      <!-- Carousel Indicators -->
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide-to="2"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Products Section -->
+<section id="products" class="products-section py-5">
+  <div class="container">
+    
+    {% if query %}
+    <!-- Search Results Section -->
+    <div class="text-center mb-5">
+      <h1 class="section-title">
+        <i class="fas fa-search me-2"></i>Showing results for "{{ query }}"
+        <small class="d-block mt-2 search-count">{{ products|length }} delicious flavors found</small>
+      </h1>
+    </div>
+
+    <!-- Search Results Grid -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-lg-4 g-4">
+      {% for product in products %}
+      <!-- Product Card (same structure as below) -->
+      <div class="col">
+        <div class="product-card h-100">
+          <div class="card-image-container">
+            <img src="/static/{{ product.img }}" class="card-img-top" alt="{{ product.name }} Ice Cream">
+            <div class="image-overlay">
+              <div class="overlay-content">
+                <span class="price-badge">₹{{ product.price }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-body d-flex flex-column">
+            <div class="product-header">
+              <h3 class="product-title">{{ product.name }}</h3>
+              <div class="rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <span class="rating-text"></span>
+              </div>
+            </div>
+            
+            <p class="product-description">{{ product.desc }}</p>
+            
+            <div class="product-footer mt-auto">
+              <div class="price-section">
+                <span class="current-price">₹{{ product.price }}</span>
+                <span class="price-unit">per scoop</span>
+              </div>
+              <a href="{% url 'add_to_cart' %}?name={{ product.name }}&price={{ product.price }}&img={{ product.img }}" 
+                 class="btn btn-primary add-to-cart-btn">
+                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="no-products-container">
+          <div class="no-products-content">
+            <div class="no-products-icon">
+              <i class="fas fa-search"></i>
+            </div>
+            <h3 class="no-products-title">No Ice Creams Found</h3>
+            <p class="no-products-text">
+              We couldn't find any flavors matching your search for <strong>"{{ query }}"</strong>
+            </p>
+            <div class="no-products-actions">
+              <a href="{% url 'home' %}" class="btn btn-primary">
+                <i class="fas fa-home me-2"></i>View All Flavors
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- Categorized Products Display -->
+    
+    <!-- FRUIT FLAVOURS SECTION -->
+    <div class="category-section mb-5">
+      <div class="text-center mb-4">
+        <h1 class="category-title">
+          🍓 Fruit Flavours Ice Cream
+          <small class="d-block mt-2 category-subtitle">Fresh, fruity, and bursting with natural goodness</small>
+        </h1>
+      </div>
+
+      <!-- Fruit Products Grid -->
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-lg-4 g-4 mb-5">
+        {% for product in fruit_products %}
+        <div class="col">
+          <div class="product-card h-100">
+            <div class="card-image-container">
+              <img src="/static/{{ product.img }}" class="card-img-top" alt="{{ product.name }} Ice Cream">
+              <div class="image-overlay">
+                <div class="overlay-content">
+                  <span class="price-badge">₹{{ product.price }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-body d-flex flex-column">
+              <div class="product-header">
+                <h3 class="product-title">{{ product.name }}</h3>
+                <div class="rating">
+                  <i class="fas fa-star"></i>
+                  {% comment %} <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i> {% endcomment %}
+                  <span class="rating-text">(4.0)</span>
+                </div>
+              </div>
+              
+              <p class="product-description">{{ product.desc }}</p>
+              
+              <div class="product-footer mt-auto">
+                <div class="price-section">
+                  <span class="current-price">₹{{ product.price }}</span>
+                  <span class="price-unit">per scoop</span>
+                </div>
+                <a href="{% url 'add_to_cart' %}?name={{ product.name }}&price={{ product.price }}&img={{ product.img }}" 
+                   class="btn btn-primary add-to-cart-btn">
+                  <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- PREMIUM FLAVOURS SECTION -->
+    <div class="category-section mb-5">
+      <div class="text-center mb-4">
+        <h1 class="category-title">
+          👑 Premium Flavours
+          <small class="d-block mt-2 category-subtitle">Luxury ingredients for the ultimate indulgence</small>
+        </h1>
+      </div>
+
+      <!-- Premium Products Grid -->
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-lg-4 g-4 mb-5">
+        {% for product in premium_products %}
+        <div class="col">
+          <div class="product-card h-100">
+            <div class="card-image-container">
+              <img src="/static/{{ product.img }}" class="card-img-top" alt="{{ product.name }} Ice Cream">
+              <div class="image-overlay">
+                <div class="overlay-content">
+                  <span class="price-badge">₹{{ product.price }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-body d-flex flex-column">
+              <div class="product-header">
+                <h3 class="product-title">{{ product.name }}</h3>
+                <div class="rating">
+                  <i class="fas fa-star"></i>
+                  {% comment %} <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i> {% endcomment %}
+                  <span class="rating-text">(4.9)</span>
+                </div>
+              </div>
+              
+              <p class="product-description">{{ product.desc }}</p>
+              
+              <div class="product-footer mt-auto">
+                <div class="price-section">
+                  <span class="current-price">₹{{ product.price }}</span>
+                  <span class="price-unit">per scoop</span>
+                </div>
+                <a href="{% url 'add_to_cart' %}?name={{ product.name }}&price={{ product.price }}&img={{ product.img }}" 
+                   class="btn btn-primary add-to-cart-btn">
+                  <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- CLASSIC FLAVOURS SECTION -->
+    <div class="category-section mb-5">
+      <div class="text-center mb-4">
+        <h1 class="category-title">
+          🍦 Classic Flavours
+          <small class="d-block mt-2 category-subtitle">Timeless favorites that never go out of style</small>
+        </h1>
+      </div>
+
+      <!-- Classic Products Grid -->
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-lg-4 g-4 mb-5">
+        {% for product in classic_products %}
+        <div class="col">
+          <div class="product-card h-100">
+            <div class="card-image-container">
+              <img src="/static/{{ product.img }}" class="card-img-top" alt="{{ product.name }} Ice Cream">
+              <div class="image-overlay">
+                <div class="overlay-content">
+                  <span class="price-badge">₹{{ product.price }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-body d-flex flex-column">
+              <div class="product-header">
+                <h3 class="product-title">{{ product.name }}</h3>
+                <div class="rating">
+                  <i class="fas fa-star"></i>
+                  {% comment %} <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i> {% endcomment %}
+                  <span class="rating-text">(4.5)</span>
+                </div>
+              </div>
+              
+              <p class="product-description">{{ product.desc }}</p>
+              
+              <div class="product-footer mt-auto">
+                <div class="price-section">
+                  <span class="current-price">₹{{ product.price }}</span>
+                  <span class="price-unit">per scoop</span>
+                </div>
+                <a href="{% url 'add_to_cart' %}?name={{ product.name }}&price={{ product.price }}&img={{ product.img }}" 
+                   class="btn btn-primary add-to-cart-btn">
+                  <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% endif %}
+  </div>
+</section>
+
+
+<!-- Features Section -->
+<section class="features-section py-5">
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-12 mb-5">
+        <h2 class="section-title">Why Choose Ahmed Ice Creams?</h2>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-leaf"></i>
+          </div>
+          <h4 class="feature-title">Natural Ingredients</h4>
+          <p class="feature-description">Made with 100% natural ingredients and no artificial preservatives</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-shipping-fast"></i>
+          </div>
+          <h4 class="feature-title">Fast Delivery</h4>
+          <p class="feature-description">Fresh ice cream delivered to your doorstep within 30 minutes</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-award"></i>
+          </div>
+          <h4 class="feature-title">Premium Quality</h4>
+          <p class="feature-description">Award-winning recipes crafted by expert ice cream makers</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Enhanced Styles -->
+<style>
+  /* Global Background and Fonts */
+  body {
+    background: linear-gradient(135deg, #ffeef3 0%, #fff5f8 100%);
+    font-family: 'Poppins', sans-serif;
+  }
+
+  /* Hero Carousel */
+  .hero-carousel {
+    position: relative;
+  }
+
+  .carousel-item {
+    height: 60vh;
+    min-height: 400px;
+  }
+
+  .hero-banner {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Enhanced Carousel Caption */
+  /* Mobile Responsiveness - IMPROVED */
+@media (max-width: 768px) {
+  .carousel-item {
+    height: 40vh;
+    min-height: 300px;
+  }
+
+  .carousel-caption {
+    padding: 1rem;          /* Further reduced */
+    bottom: 5%;             /* Lower position */
+    max-width: 85%;         /* Narrower width */
+    border-radius: 12px;    /* Smaller radius */
+  }
+
+  .carousel-caption h5 {
+    font-size: 1.4rem;      /* Smaller on mobile */
+    margin-bottom: 0.6rem;  /* Less margin */
+  }
+
+  .carousel-caption p {
+    font-size: 0.9rem;      /* Smaller text */
+    margin-bottom: 0.8rem;  /* Less margin */
+  }
+
+  .carousel-cta {
+    padding: 0.5rem 1.2rem; /* Smaller button */
+    font-size: 0.85rem;     /* Smaller text */
+  }
+
+  /* Other existing mobile styles... */
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .product-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .add-to-cart-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .feature-card {
+    margin-bottom: 1rem;
+  }
+
+  .no-products-container {
+    padding: 2rem 1rem;
+  }
+
+  .no-products-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+/* Extra small devices (landscape phones, less than 400px) */
+@media (max-width: 400px) {
+  .carousel-caption {
+    padding: 0.6rem 0.8rem;
+    bottom: 2%;
+    max-width: 95%;
+  }
+
+  .carousel-caption h5 {
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .carousel-caption p {
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .carousel-cta {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .card-image-container {
+    height: 120px;
+  }
+  .product-title {
+    font-size: 0.98rem;
+  }
+  .product-description {
+    -webkit-line-clamp: 2;
+  }
+}
+
+  .carousel-cta:hover {
+    background: linear-gradient(45deg, #ff4d6d, #d62854);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 77, 109, 0.4);
+  }
+
+  /* Carousel Indicators - MORE SPACE FROM CAPTION */
+.carousel-indicators {
+  bottom: 5px;   /* Even lower - just 5px from bottom */
+}
+
+.carousel-indicators [data-bs-target] {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(214, 51, 108, 0.6);
+  border: 2px solid white;
+}
+
+.carousel-indicators .active {
+  background: #d6336c;
+}
+
+  /* Products Section */
+  .products-section {
+    background: linear-gradient(180deg, #ffeef3 0%, #fff5f8 100%);
+  }
+
+  .section-title {
+    font-family: 'Pacifico', cursive;
+    font-size: 2.5rem;
+    color: #d6336c;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .subtitle, .search-count {
+    font-size: 1.1rem;
+    color: #666;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+  }
+
+  /* Enhanced Product Cards */
+  .product-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(214, 51, 108, 0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    border: none;
+  }
+
+  .product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(214, 51, 108, 0.2);
+  }
+
+  .card-image-container {
+    position: relative;
+    overflow: hidden;
+    height: 250px;
+  }
+
+  .card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .product-card:hover .card-img-top {
+    transform: scale(1.1);
+  }
+
+  .image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255, 133, 162, 0.8), rgba(255, 77, 109, 0.8));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-card:hover .image-overlay {
+    opacity: 1;
+  }
+
+  .price-badge {
+    background: white;
+    color: #d6336c;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+
+  /* Product Card Content */
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .product-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+    font-family: 'Pacifico', cursive;
+  }
+
+  .rating {
+    color: #ffc107;
+    font-size: 0.9rem;
+  }
+
+  .rating-text {
+    color: #666;
+    margin-left: 0.25rem;
+  }
+
+  .product-description {
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+  }
+
+  .current-price {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #d6336c;
+  }
+
+  .price-unit {
+    font-size: 0.8rem;
+    color: #999;
+    display: block;
+  }
+
+  .add-to-cart-btn {
+    background: linear-gradient(45deg, #ff85a2, #ff4d6d);
+    border: none;
+    border-radius: 50px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .add-to-cart-btn:hover {
+    background: linear-gradient(45deg, #ff4d6d, #d62854);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+  }
+
+  /* No Products Section */
+  .no-products-container {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(214, 51, 108, 0.1);
+  }
+
+  .no-products-icon {
+    font-size: 4rem;
+    color: #ff85a2;
+    margin-bottom: 1.5rem;
+  }
+
+  .no-products-title {
+    color: #d6336c;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-family: 'Pacifico', cursive;
+  }
+
+  .no-products-text {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Features Section */
+  .features-section {
+    background: #fff;
+  }
+
+  .feature-card {
+    text-align: center;
+    padding: 2rem 1rem;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(214, 51, 108, 0.1);
+    transition: transform 0.3s ease;
+    height: 100%;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .feature-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(45deg, #ff85a2, #ff4d6d);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: white;
+    font-size: 1.5rem;
+  }
+
+  .feature-title {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+    font-family: 'Pacifico', cursive;
+  }
+
+  .feature-description {
+    color: #666;
+    line-height: 1.6;
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .carousel-item {
+      height: 40vh;
+      min-height: 300px;
+    }
+
+    .carousel-caption {
+      padding: 1rem;
+      bottom: 5%;
+      max-width: 90%;
+    }
+
+    .carousel-caption h5 {
+      font-size: 1.8rem;
+    }
+
+    .carousel-caption p {
+      font-size: 1rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+    }
+
+    .product-footer {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    .add-to-cart-btn {
+      width: 100%;
+      text-align: center;
+    }
+
+    .feature-card {
+      margin-bottom: 1rem;
+    }
+
+    .no-products-container {
+      padding: 2rem 1rem;
+    }
+
+    .no-products-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+
+  /* Category Section Styles */
+.category-section {
+  margin-bottom: 4rem;
+  padding: 2rem 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 238, 243, 0.3) 0%, rgba(255, 245, 248, 0.3) 100%);
+}
+
+.category-title {
+  font-family: 'Pacifico', cursive;
+  font-size: 2.8rem;
+  color: #d6336c;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.category-subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* Responsive adjustments for category titles */
+@media (max-width: 768px) {
+  .category-title {
+    font-size: 2.2rem;
+  }
+  
+  .category-subtitle {
+    font-size: 1rem;
+  }
+}
+
+/* MOBILE PRODUCT CARDS - UPDATED VERSION */
+@media (max-width: 576px) {
+  .carousel-caption {
+    padding: 0.8rem;
+    bottom: 3%;
+    max-width: 90%;
+  }
+
+  .carousel-caption h5 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .carousel-caption p {
+    font-size: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .carousel-cta {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  .category-title {
+    font-size: 1.8rem;
+  }
+  
+  .category-subtitle {
+    font-size: 0.9rem;
+  }
+
+  /* FIXED: Mobile grid layout */
+  .products-section .row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    margin: 0 -6px !important;
+  }
+
+  .products-section .row > * {
+    width: 50% !important;
+    flex: 0 0 50% !important;
+    max-width: 50% !important;
+    padding: 0 6px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* FIXED: Card container */
+  .product-card {
+    height: 320px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    margin-bottom: 0 !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* FIXED: Image container */
+  .card-image-container {
+    height: 120px !important;
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* FIXED: Card body */
+  .card-body {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0.7rem !important;
+    justify-content: space-between !important;
+  }
+
+  .product-header {
+  margin-bottom: 0.4rem !important;
+  flex-shrink: 0 !important;
+}
+
+.product-title {
+  font-size: 0.85rem !important;
+  line-height: 1.1 !important;
+  margin: 0 0 0.2rem 0 !important;
+}
+
+.rating {
+  display: flex !important;
+  align-items: right !important;
+  margin-bottom: 0.4rem !important;
+  font-size: 0.65rem !important;
+  justify-content: right !important; /* Center the rating */
+}
+
+
+  /* FIXED: Description with tap to expand */
+  .product-description {
+    font-size: 0.75rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.5rem !important;
+    flex: 1 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+    position: relative !important;
+  }
+
+  .product-description::after {
+    content: "...more" !important;
+    color: #d6336c !important;
+    font-size: 0.65rem !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+  }
+
+  /* Modal popup for expanded description */
+  .product-description.expanded {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 85% !important;
+    max-width: 280px !important;
+    height: auto !important;
+    max-height: 60vh !important;
+    background: white !important;
+    border-radius: 12px !important;
+    padding: 1.2rem !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4) !important;
+    z-index: 1001 !important;
+    display: block !important;
+    -webkit-line-clamp: unset !important;
+    -webkit-box-orient: unset !important;
+    overflow: auto !important;
+    cursor: default !important;
+    border: 2px solid #d6336c !important;
+  }
+
+  .product-description.expanded::after {
+    content: "✕" !important;
+    position: absolute !important;
+    top: 8px !important;
+    right: 12px !important;
+    color: white !important;
+    background: #d6336c !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    padding: 2px 6px !important;
+    border-radius: 50% !important;
+    width: 20px !important;
+    height: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* FIXED: Footer at bottom */
+  .product-footer {
+    margin-top: auto !important;
+    padding-top: 0.5rem !important;
+    gap: 0.3rem !important;
+    flex-direction: column !important;
+    flex-shrink: 0 !important;
+  }
+
+  .current-price {
+    font-size: 0.9rem !important;
+    text-align: center !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .price-unit {
+    font-size: 0.6rem !important;
+  }
+
+  .add-to-cart-btn {
+    padding: 0.4rem 0.6rem !important;
+    font-size: 0.75rem !important;
+    width: 100% !important;
+    border-radius: 6px !important;
+  }
+}
+
+
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.innerWidth <= 576) {
+    const descriptions = document.querySelectorAll('.product-description');
+    
+    // Create backdrop
+    let backdrop = document.querySelector('.description-backdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.className = 'description-backdrop';
+      backdrop.style.cssText = `
+      position: fixed !important;
+      top: 0 !important; 
+      left: 0 !important;
+      width: 100% !important; 
+      height: 100% !important;
+      background: rgba(255,255,255,0.1) !important; /* Very light instead of dark */
+      z-index: 1000 !important;
+      display: none !important;
+      `;
+
+      document.body.appendChild(backdrop);
+    }
+    
+    descriptions.forEach(desc => {
+      desc.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (this.classList.contains('expanded')) {
+          // Close
+          this.classList.remove('expanded');
+          backdrop.style.display = 'none';
+          document.body.style.overflow = 'auto';
+        } else {
+          // Close any other open descriptions
+          descriptions.forEach(d => d.classList.remove('expanded'));
+          
+          // Open this one
+          this.classList.add('expanded');
+          backdrop.style.display = 'block';
+          document.body.style.overflow = 'hidden';
+        }
+      });
+    });
+    
+    // Close when clicking backdrop or close button
+    backdrop.addEventListener('click', function() {
+      descriptions.forEach(d => d.classList.remove('expanded'));
+      backdrop.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    });
+    
+    // Handle close button clicks
+    document.addEventListener('click', function(e) {
+      if (e.target.matches('.product-description.expanded::after') || 
+          e.target.closest('.product-description.expanded')) {
+        const expandedDesc = document.querySelector('.product-description.expanded');
+        if (expandedDesc && e.target === expandedDesc.querySelector('::after')) {
+          expandedDesc.classList.remove('expanded');
+          backdrop.style.display = 'none';
+          document.body.style.overflow = 'auto';
+        }
+      }
+    });
+  }
+});
+</script>
+
+
+
+
+
+
+
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+{% endblock body %}

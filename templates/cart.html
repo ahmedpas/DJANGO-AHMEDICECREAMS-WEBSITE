@@ -1,0 +1,773 @@
+{% extends "base.html" %}
+{% block title %}Your Cart{% endblock %}
+{% block body %}
+
+<div class="container my-5">
+  <h2 class="mb-5 text-center fw-bold">
+    <i class="fa fa-shopping-cart text-white"></i> Your Cart
+  </h2>
+
+  {% if cart %}
+  <div class="row gy-4">
+    {% for item in cart %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 ice-cream-card">
+        <div class="card-image-wrapper">
+          <img src="/static/{{ item.img }}" class="card-img-top" alt="{{ item.name }}">
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title ice-cream-title">{{ item.name }}</h5>
+          <div class="price-tag">Price: ₹{{ item.price }}</div>
+
+          <!-- Updated Quantity Control with correct data attributes -->
+          <div class="quantity-controls d-flex align-items-center justify-content-center mb-3" data-product="{{ item.name }}">
+            <button type="button" class="quantity-btn minus-btn" data-action="minus">
+              <i class="fa fa-minus"></i>
+            </button>
+            <span class="quantity-display">{{ item.quantity }}</span>
+            <button type="button" class="quantity-btn plus-btn" data-action="plus">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+
+          <!-- Updated item total display -->
+        <div class="item-total text-center mb-2" data-product="{{ item.name }}">
+          Subtotal: ₹<span class="total-amount">{{ item.subtotal }}</span>
+          </div>
+
+
+          <!-- Remove Button -->
+          <button onclick="removeItem('{{ item.name }}')" class="remove-btn mt-auto">
+            <i class="fa fa-trash"></i> Remove
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Updated Checkout Section with cart summary -->
+  <div class="checkout-section mt-5">
+    <div class="total-display">
+      <div class="total-amount">
+        <p class="items-count" id="cart-count">Total Items: {{ total_items }}</p>
+        <h3>Total: ₹<span class="cart-total" id="cart-total">{{ total }}</span></h3>
+      </div>
+      <a href="/checkout" class="checkout-btn">
+        <i class="fa fa-credit-card"></i> Proceed to Checkout
+      </a>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="empty-cart">
+    <div class="empty-cart-content">
+      <i class="fa fa-shopping-cart empty-cart-icon"></i>
+      <h3>Your cart is empty!</h3>
+      <p>Discover our delicious ice cream flavors</p>
+      <a href="/" class="start-shopping-btn">
+        <i class="fa fa-ice-cream"></i> Start Shopping
+      </a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Keep all your existing styles -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* Keep ALL your existing styles exactly as they are */
+body {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="3" fill="%23ffffff20"/><circle cx="80" cy="40" r="2" fill="%23ffffff30"/><circle cx="40" cy="80" r="2.5" fill="%23ffffff25"/><circle cx="90" cy="10" r="1.5" fill="%23ffffff35"/><circle cx="10" cy="70" r="2" fill="%23ffffff20"/></svg>') repeat;
+  pointer-events: none;
+  z-index: -1;
+}
+
+h2 {
+  font-family: 'Fredoka One', cursive;
+  font-size: 3rem;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  margin-bottom: 2rem;
+}
+
+.ice-cream-card {
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  border: none;
+  border-radius: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.05);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.ice-cream-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+}
+
+.ice-cream-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.card-image-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  margin: 15px;
+}
+
+.card-img-top {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 20px;
+  transition: transform 0.3s ease;
+}
+
+.ice-cream-title {
+  font-family: 'Fredoka One', cursive;
+  color: #e91e63;
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.price-tag {
+  background: linear-gradient(45deg, #ff6b6b, #feca57);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  text-align: center;
+  margin: 10px auto;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+  max-width: fit-content;
+}
+
+/* Updated quantity control styles */
+.quantity-controls {
+  background: #f8f9fa;
+  border-radius: 25px;
+  padding: 10px;
+  gap: 15px;
+}
+
+.quantity-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+.minus-btn {
+  background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.plus-btn {
+  background: linear-gradient(45deg, #26de81, #20bf6b);
+  box-shadow: 0 4px 15px rgba(38, 222, 129, 0.3);
+}
+
+.quantity-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.quantity-display {
+  background: white;
+  color: #2d3436;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  min-width: 50px;
+  text-align: center;
+  border: 3px solid #e17055;
+}
+
+/* Item total styling */
+.item-total {
+  font-weight: 600;
+  color: #e17055;
+  font-size: 1rem;
+}
+
+.remove-btn {
+  background: linear-gradient(45deg, #fd79a8, #e84393);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 15px rgba(253, 121, 168, 0.3);
+}
+
+.remove-btn:hover {
+  background: linear-gradient(45deg, #e84393, #d63384);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(253, 121, 168, 0.4);
+}
+
+.checkout-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 3rem;
+}
+
+.total-display {
+  background: linear-gradient(145deg, #ffffff, #f1f2f6);
+  padding: 30px;
+  border-radius: 25px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  text-align: center;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+}
+
+.total-display::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+  border-radius: 25px;
+  z-index: -1;
+}
+
+.total-amount h3 {
+  font-family: 'Fredoka One', cursive;
+  color: #2d3436;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.cart-total {
+  color: #e17055;
+  font-size: 2rem;
+}
+
+.items-count {
+  color: #74b9ff;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.checkout-btn {
+  background: linear-gradient(45deg, #00b894, #00a085);
+  color: white;
+  text-decoration: none;
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0, 184, 148, 0.3);
+}
+
+.checkout-btn:hover {
+  background: linear-gradient(45deg, #00a085, #019875);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 184, 148, 0.4);
+  color: white;
+  text-decoration: none;
+}
+
+.empty-cart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+}
+
+.empty-cart-content {
+  text-align: center;
+  background: linear-gradient(145deg, #ffffff, #f1f2f6);
+  padding: 50px 40px;
+  border-radius: 30px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.empty-cart-icon {
+  font-size: 5rem;
+  color: #ddd;
+  margin-bottom: 1rem;
+}
+
+.empty-cart-content h3 {
+  font-family: 'Fredoka One', cursive;
+  color: #636e72;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.empty-cart-content p {
+  color: #74b9ff;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.start-shopping-btn {
+  background: linear-gradient(45deg, #74b9ff, #0984e3);
+  color: white;
+  text-decoration: none;
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(116, 185, 255, 0.3);
+}
+
+.start-shopping-btn:hover {
+  background: linear-gradient(45deg, #0984e3, #2d3436);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(116, 185, 255, 0.4);
+  color: white;
+  text-decoration: none;
+}
+
+/* MOBILE OPTIMIZATION FOR CART PAGE */
+@media (max-width: 576px) {
+  /* Container and layout adjustments */
+  .container {
+    padding: 0.5rem !important;
+  }
+  
+  h2 {
+    font-size: 1.8rem !important;
+    margin-bottom: 1rem !important;
+    text-align: center !important;
+  }
+  
+  /* Cart items grid - 2 columns like home page */
+  .row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    margin: 0 -6px !important;
+  }
+  
+  .row > .col-md-6,
+  .row > .col-lg-4,
+  .row > [class*="col-"] {
+    width: 50% !important;
+    flex: 0 0 50% !important;
+    max-width: 50% !important;
+    padding: 0 6px !important;
+    margin-bottom: 12px !important;
+  }
+  
+  /* Ice cream card optimization */
+  .ice-cream-card {
+    height: 320px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    margin-bottom: 0 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+  }
+  
+  /* Card image wrapper */
+  .card-image-wrapper {
+    height: 100px !important;
+    margin: 8px !important;
+    flex-shrink: 0 !important;
+  }
+  
+  .card-img-top {
+    height: 100px !important;
+    border-radius: 12px !important;
+  }
+  
+  /* Card body */
+  .card-body {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0.6rem !important;
+    justify-content: space-between !important;
+  }
+  
+  /* Title */
+  .ice-cream-title {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.3rem !important;
+    line-height: 1.1 !important;
+  }
+  
+  /* Price tag */
+  .price-tag {
+    font-size: 0.8rem !important;
+    padding: 4px 8px !important;
+    margin: 0.2rem auto !important;
+  }
+  
+  /* Quantity controls - compact version */
+  .quantity-controls {
+    padding: 4px !important;
+    gap: 6px !important;
+    margin-bottom: 0.3rem !important;
+  }
+  
+  .quantity-btn {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .quantity-display {
+    padding: 4px 8px !important;
+    font-size: 0.8rem !important;
+    min-width: 35px !important;
+    border-width: 2px !important;
+  }
+  
+  /* Item total */
+  .item-total {
+    font-size: 0.8rem !important;
+    text-align: center !important;
+    margin-bottom: 0.3rem !important;
+  }
+  
+  /* Remove button */
+  .remove-btn {
+    padding: 6px 12px !important;
+    font-size: 0.7rem !important;
+    border-radius: 15px !important;
+    width: 100% !important;
+  }
+  
+  /* Checkout section optimization */
+  .checkout-section {
+    justify-content: center !important;
+    margin-top: 1.5rem !important;
+  }
+  
+  .total-display {
+    width: 100% !important;
+    max-width: 320px !important;
+    padding: 20px !important;
+    border-radius: 15px !important;
+  }
+  
+  .total-amount h3 {
+    font-size: 1.3rem !important;
+  }
+  
+  .cart-total {
+    font-size: 1.5rem !important;
+  }
+  
+  .items-count {
+    font-size: 0.9rem !important;
+  }
+  
+  .checkout-btn {
+    padding: 12px 24px !important;
+    font-size: 1rem !important;
+    border-radius: 20px !important;
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  
+  /* Empty cart optimization */
+  .empty-cart-content {
+    padding: 30px 20px !important;
+    border-radius: 20px !important;
+    margin: 0 10px !important;
+  }
+  
+  .empty-cart-icon {
+    font-size: 3rem !important;
+  }
+  
+  .empty-cart-content h3 {
+    font-size: 1.5rem !important;
+  }
+  
+  .empty-cart-content p {
+    font-size: 1rem !important;
+  }
+  
+  .start-shopping-btn {
+    padding: 12px 24px !important;
+    font-size: 1rem !important;
+    border-radius: 20px !important;
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+
+</style>
+
+<!-- UPDATED AJAX Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    const csrftoken = getCookie('csrftoken');
+    
+    // Add click event to all quantity buttons
+    document.querySelectorAll('.quantity-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const productName = this.closest('.quantity-controls').dataset.product;
+            const action = this.dataset.action === 'plus' ? 'plus' : 'minus';
+            
+            // Send AJAX request
+            fetch('/update-quantity-ajax/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                },
+                body: JSON.stringify({
+                    item_name: productName,
+                    action: action
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update quantity display
+                    const quantityDisplay = this.closest('.quantity-controls').querySelector('.quantity-display');
+                    quantityDisplay.textContent = data.quantity;
+                    
+                    // FIXED: Update item total using correct selector and data key
+                    const card = this.closest('.ice-cream-card');
+                    const itemTotal = card.querySelector('.item-total .total-amount');
+                    if (itemTotal) {
+                    itemTotal.textContent = data.subtotal; // USE SUBTOTAL NOT TOTAL
+                    }
+                    
+                    // Update cart summary
+                    document.getElementById('cart-count').textContent = `Total Items: ${data.total_items}`;
+                    document.getElementById('cart-total').textContent = data.cart_total;
+                    
+                    // Update navbar cart count
+                    updateNavbarCartCount(data.total_items);
+                    
+                    // Show success message
+                    showNotification('Cart updated successfully!', 'success');
+                    
+                    // Reload if item was removed (quantity = 0)
+                    if (data.quantity === 0) {
+                        setTimeout(() => {
+                            location.reload();
+                        }, 300);
+                    }
+                } else {
+                    showNotification('Error updating cart please sign-in first!', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error updating cart please sign-in first!', 'error');
+            });
+        });
+    });
+    
+    // Function to update navbar cart count
+    function updateNavbarCartCount(newCount) {
+        // Update dropdown cart count
+        const dropdownCount = document.getElementById('dropdown-cart-count');
+        if (dropdownCount) {
+            dropdownCount.textContent = newCount;
+            dropdownCount.style.display = newCount > 0 ? 'inline' : 'none';
+        }
+        
+        // Update main cart button badge
+        const navCartBadge = document.querySelector('.cart-button .badge');
+        if (navCartBadge) {
+            navCartBadge.textContent = newCount;
+            navCartBadge.style.display = newCount > 0 ? 'inline' : 'none';
+        }
+    }
+    
+    // Function to show notifications
+    function showNotification(message, type) {
+        // Remove any existing messages
+        const existingMsg = document.querySelector('.cart-message');
+        if (existingMsg) {
+            existingMsg.remove();
+        }
+        
+        // Create new message
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'cart-message';
+        messageDiv.textContent = message;
+        messageDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? 'linear-gradient(45deg, #00b894, #00a085)' : 'linear-gradient(45deg, #ff6b6b, #ee5a52)'};
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            z-index: 1055;
+            font-weight: 600;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        `;
+        
+        document.body.appendChild(messageDiv);
+        
+        setTimeout(() => {
+            messageDiv.style.transform = 'translateX(0)';
+        }, 100);
+        
+        setTimeout(() => {
+            messageDiv.style.transform = 'translateX(400px)';
+            setTimeout(() => {
+                if (document.body.contains(messageDiv)) {
+                    document.body.removeChild(messageDiv);
+                }
+            }, 300);
+        }, 3000);
+    }
+});
+
+// Keep your existing removeItem function
+function removeItem(itemName) {
+    const card = document.querySelector(`[data-product="${itemName}"]`).closest('.ice-cream-card');
+    
+    // Add removal animation
+    card.style.transition = 'all 0.5s ease';
+    card.style.transform = 'scale(0.8)';
+    card.style.opacity = '0.5';
+    
+    fetch(`/remove-from-cart-ajax/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: JSON.stringify({ item_name: itemName })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(`${itemName} removed from cart!`, 'success');
+            setTimeout(() => {
+                location.reload();
+            }, 300);
+        }
+    })
+    .catch(error => {
+        console.error('Error removing item please sign-in first!:', error);
+        card.style.transform = 'scale(1)';
+        card.style.opacity = '1';
+        showNotification('Error removing item please sign-in first!', 'error');
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function showNotification(message, type) {
+    const messageDiv = document.createElement('div');
+    messageDiv.textContent = message;
+    messageDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? 'linear-gradient(45deg, #00b894, #00a085)' : 'linear-gradient(45deg, #ff6b6b, #ee5a52)'};
+        color: white;
+        padding: 15px 25px;
+        border-radius: 25px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        z-index: 1055;
+        font-weight: 600;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+    `;
+    
+    document.body.appendChild(messageDiv);
+    
+    setTimeout(() => {
+        messageDiv.style.transform = 'translateX(0)';
+    }, 100);
+    
+    setTimeout(() => {
+        messageDiv.style.transform = 'translateX(400px)';
+        setTimeout(() => {
+            if (document.body.contains(messageDiv)) {
+                document.body.removeChild(messageDiv);
+            }
+        }, 300);
+    }, 3000);
+}
+</script>
+
+
+{% endblock %}

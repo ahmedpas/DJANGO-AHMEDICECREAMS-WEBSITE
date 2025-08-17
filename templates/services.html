@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block title %}Services{% endblock %}
+{% block body %}
+
+<!-- Services Section with Attractive Icons -->
+<section class="services-section py-5" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                
+                <!-- Header -->
+                <div class="text-center mb-5">
+                    <h2 class="display-4 fw-bold mb-3" style="font-family: 'Pacifico', cursive; color: #d6336c;">
+                        🍨 Our Premium Services
+                    </h2>
+                    <p class="lead text-muted">
+                        Making every occasion sweeter with our professional ice cream services
+                    </p>
+                </div>
+
+                <!-- Services Grid -->
+                <div class="row g-4">
+                    
+                    <!-- Custom Ice Cream Orders -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="service-card h-100">
+                            <div class="service-icon">
+                                <i class="fas fa-ice-cream"></i>
+                            </div>
+                            <h4 class="service-title">Custom Ice Cream Orders</h4>
+                            <p class="service-description">
+                                Create your dream flavor! From exotic fruits to decadent chocolates, we craft personalized ice cream flavors that make your celebration truly unique.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Birthday Parties -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="service-card h-100">
+                            <div class="service-icon">
+                                <i class="fas fa-birthday-cake"></i>
+                            </div>
+                            <h4 class="service-title">Birthday Parties</h4>
+                            <p class="service-description">
+                                Transform any birthday into a magical celebration! Our interactive ice cream stations let guests create their perfect sundae while making unforgettable memories.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Wedding Catering -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="service-card h-100">
+                            <div class="service-icon">
+                                <i class="fas fa-ring"></i>
+                            </div>
+                            <h4 class="service-title">Wedding Catering</h4>
+                            <p class="service-description">
+                                Sweet endings for new beginnings. Elegant ice cream bars and dessert stations that add a touch of whimsy to your sophisticated celebration.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Corporate Events -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="service-card h-100">
+                            <div class="service-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <h4 class="service-title">Corporate Events</h4>
+                            <p class="service-description">
+                                Boost team morale with delicious treats! Our professional corporate catering adds a fun twist to meetings, product launches, and company celebrations.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Bulk Orders -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="service-card h-100">
+                            <div class="service-icon">
+                                <i class="fas fa-boxes"></i>
+                            </div>
+                            <h4 class="service-title">Bulk Orders</h4>
+                            <p class="service-description">
+                                Quality meets quantity. Whether you need 50 or 500 servings, we've got you covered with competitive pricing and reliable delivery.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Event Catering -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="service-card h-100">
+                            <div class="service-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h4 class="service-title">Event Catering</h4>
+                            <p class="service-description">
+                                From intimate gatherings to grand celebrations, our mobile ice cream service brings joy to any occasion. Setup, service, and smiles included!
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Call to Action -->
+                <div class="text-center mt-5">
+                    <a href="{% url 'book_services' %}" class="btn btn-primary btn-lg cta-button">
+                        <i class="fas fa-calendar-check me-2"></i>Book Our Services Now
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced Styles for Services Section -->
+<style>
+/* ——— 1. Global reset ——— */
+*        { box-sizing:border-box; }
+html,body{ margin:0; width:100%; overflow-x:hidden;
+           font-family:'Poppins',sans-serif;
+           background:linear-gradient(135deg,#ff9a9e 0%,#fecfef 100%); }
+
+/* ——— 2. Layout wrapper ——— */
+.container{
+    width:100%;
+    max-width:1200px;
+    margin:0 auto;
+    padding:10px;               /* desktop padding */
+}
+
+/* ——— 3. Service card ——— */
+.service-card{
+    background:rgba(255,255,255,.95);
+    border-radius:15px;
+    padding:25px;
+    margin-bottom:20px;
+    text-align:center;
+    box-shadow:0 4px 15px rgba(0,0,0,.10);
+    transition:.25s ease;
+}
+.service-card:hover{transform:translateY(-5px);
+                    box-shadow:0 8px 25px rgba(0,0,0,.15);}
+
+/* ——— 4. Icon, title, text ——— */
+.service-icon{
+    width:60px;height:60px;
+    margin:0 auto 15px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(45deg,#ff85a2,#ff4d6d);
+    color:#fff;font-size:24px;
+}
+.service-title       {color:#d6336c;font-size:20px;font-weight:600;margin:0 0 10px;}
+.service-description {color:#666;line-height:1.6;font-size:14px;
+                      word-wrap:break-word;overflow-wrap:break-word;white-space:normal;}
+
+/* ——— 5. Call-to-action button ——— */
+.cta-button{
+    display:inline-block;
+    padding:15px 30px;
+    margin-top:30px;
+    background:linear-gradient(45deg,#ff85a2,#ff4d6d);
+    color:#fff;text-decoration:none;border-radius:25px;font-weight:600;
+    transition:.25s ease;
+}
+.cta-button:hover{background:linear-gradient(45deg,#ff4d6d,#d62854);}
+
+/* ——— 6. Headings ——— */
+h1,h2,h3{color:#d6336c;text-align:center;margin:0 0 20px;}
+
+/* ——— 7. Mobile tweaks ——— */
+@media(max-width:768px){
+    .container      {padding:5px;}            /* tablet & phones */
+    .service-card   {padding:20px;margin-bottom:15px;}
+    .service-icon   {width:50px;height:50px;font-size:20px;}
+    .service-title  {font-size:18px;}
+    .service-description{font-size:13px;}
+    h1              {font-size:24px;}
+    .cta-button     {padding:12px 25px;font-size:14px;}
+}
+</style>
+
+
+
+
+{% endblock %}

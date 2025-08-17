@@ -1,0 +1,442 @@
+{% extends "base.html" %}
+{% block title %}My Activity History{% endblock %}
+
+{% block body %}
+<section class="activity-section" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); min-height: 100vh; padding: 2rem 0;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold" style="font-family: 'Pacifico', cursive; color: #d6336c;">
+                🏃‍♀️ My Activity History
+            </h1>
+            <p class="lead text-muted">Track your orders, bookings, and messages</p>
+        </div>
+
+        <!-- Activity Timeline -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                {% for activity in timeline %}
+                <div class="activity-card activity-{{ activity.activity_type }}">
+                    <div class="activity-icon">
+                        {% if activity.activity_type == 'order' %}
+                            <i class="fas fa-ice-cream"></i>
+                        {% elif activity.activity_type == 'service' %}
+                            <i class="fas fa-calendar-check"></i>
+                        {% else %}
+                            <i class="fas fa-envelope"></i>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="activity-content">
+                        <!-- Main Header - Always Visible -->
+                        <div class="activity-header" onclick="toggleDetails({{ forloop.counter }})">
+                            <div class="header-left">
+                                <h5 class="activity-title">
+                                    {% if activity.activity_type == 'order' %}
+                                        Order #{{ activity.order_number }}
+                                    {% elif activity.activity_type == 'service' %}
+                                        {{ activity.service_type|title }} Booking
+                                    {% else %}
+                                        Message from {{ activity.name }}
+                                    {% endif %}
+                                </h5>
+                                <div class="activity-status status-{{ activity.status|lower }}">
+                                    {{ activity.status }}
+                                </div>
+                            </div>
+                            
+                            <div class="header-right">
+                                <div class="activity-meta">
+                                    <span class="activity-date">
+                                        <i class="fas fa-clock me-1"></i>
+                                        {% if activity.activity_type == 'order' %}
+                                            {{ activity.created_at|date:"M d, Y - h:i A" }}
+                                        {% else %}
+                                            {{ activity.date|date:"M d, Y" }}
+                                        {% endif %}
+                                    </span>
+                                    {% if activity.activity_type == 'order' %}
+                                        <span class="activity-amount">₹{{ activity.total_amount }}</span>
+                                    {% elif activity.activity_type == 'service' %}
+                                        <span class="activity-amount">{{ activity.budget_range }}</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Dropdown Arrow -->
+                                <i class="fas fa-chevron-down dropdown-arrow" id="arrow-{{ forloop.counter }}"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Expandable Details Section -->
+                        <div class="activity-details-container" id="details-{{ forloop.counter }}" style="display: none;">
+                            <hr class="details-divider">
+                            
+                            {% if activity.activity_type == 'order' %}
+                                <!-- Order Details -->
+                                <div class="order-details">
+                                    <h6 class="details-title">
+                                        <i class="fas fa-ice-cream me-2"></i>Items Ordered:
+                                    </h6>
+                                    <div class="items-list">
+                                        {% for line in activity.items_summary.splitlines %}
+                                        {% if line.strip %}
+                                        <div class="item-entry">
+                                            <i class="fas fa-circle item-bullet"></i>
+                                            {{ line.strip }}
+                                        </div>
+                                        {% endif %}
+                                        {% endfor %}
+
+                                    </div>
+                                    <div class="order-summary">
+                                        <strong>Total: ₹{{ activity.total_amount }}</strong>
+                                    </div>
+                                </div>
+                                
+                            {% elif activity.activity_type == 'service' %}
+                                <!-- Service Booking Details -->
+                                <div class="service-details">
+                                    <h6 class="details-title">
+                                        <i class="fas fa-calendar-check me-2"></i>Booking Details:
+                                    </h6>
+                                    <div class="service-info">
+                                        <div class="info-row">
+                                            <span class="info-label">Service Type:</span>
+                                            <span class="info-value">{{ activity.get_service_type_display }}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Event Date:</span>
+                                            <span class="info-value">{{ activity.event_date|date:"F d, Y" }}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Guest Count:</span>
+                                            <span class="info-value">{{ activity.guest_count }} people</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Budget Range:</span>
+                                            <span class="info-value">{{ activity.get_budget_range_display }}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Location:</span>
+                                            <span class="info-value">{{ activity.address|truncatechars:60 }}</span>
+                                        </div>
+                                        {% if activity.special_requirements %}
+                                        <div class="info-row">
+                                            <span class="info-label">Special Requests:</span>
+                                            <span class="info-value">{{ activity.special_requirements }}</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                            {% else %}
+                                <!-- Contact Message Details -->
+                                <div class="message-details">
+                                    <h6 class="details-title">
+                                        <i class="fas fa-envelope me-2"></i>Message Details:
+                                    </h6>
+                                    <div class="message-info">
+                                        <div class="info-row">
+                                            <span class="info-label">From:</span>
+                                            <span class="info-value">{{ activity.name }}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Email:</span>
+                                            <span class="info-value">{{ activity.email }}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Phone:</span>
+                                            <span class="info-value">{{ activity.phone }}</span>
+                                        </div>
+                                        <div class="message-content">
+                                            <span class="info-label">Message:</span>
+                                            <div class="message-text">{{ activity.desc }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="no-activity-card">
+                    <i class="fas fa-history"></i>
+                    <h4>No Activity Yet</h4>
+                    <p>Start by placing an order or booking our services!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript for Toggle Functionality -->
+<script>
+function toggleDetails(id) {
+    const detailsContainer = document.getElementById(`details-${id}`);
+    const arrow = document.getElementById(`arrow-${id}`);
+    
+    if (detailsContainer.style.display === 'none' || detailsContainer.style.display === '') {
+        // Show details
+        detailsContainer.style.display = 'block';
+        arrow.classList.remove('fa-chevron-down');
+        arrow.classList.add('fa-chevron-up');
+        arrow.style.transform = 'rotate(180deg)';
+    } else {
+        // Hide details
+        detailsContainer.style.display = 'none';
+        arrow.classList.remove('fa-chevron-up');
+        arrow.classList.add('fa-chevron-down');
+        arrow.style.transform = 'rotate(0deg)';
+    }
+}
+</script>
+
+<style>
+/* Scoped CSS - Only affects activity page */
+.activity-section .activity-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(214, 51, 108, 0.1);
+    transition: all 0.3s ease;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.activity-section .activity-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(214, 51, 108, 0.2);
+}
+
+.activity-section .activity-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.activity-section .activity-order .activity-icon { background: linear-gradient(45deg, #ff85a2, #ff4d6d); }
+.activity-section .activity-service .activity-icon { background: linear-gradient(45deg, #48dbfb, #0984e3); }
+.activity-section .activity-message .activity-icon { background: linear-gradient(45deg, #00b894, #00a085); }
+
+.activity-section .activity-content {
+    flex: 1;
+}
+
+/* Header Section */
+.activity-section .activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    transition: all 0.3s ease;
+}
+
+.activity-section .activity-header:hover {
+    background: rgba(214, 51, 108, 0.05);
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+}
+
+.activity-section .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.activity-section .header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.activity-section .activity-title {
+    color: #d6336c;
+    font-family: 'Pacifico', cursive;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.activity-section .activity-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.activity-section .status-delivered, 
+.activity-section .status-received { background: #d4edda; color: #155724; }
+.activity-section .status-pending { background: #fff3cd; color: #856404; }
+
+.activity-section .activity-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 0.9rem;
+    color: #666;
+    gap: 0.25rem;
+}
+
+.activity-section .activity-amount {
+    font-weight: 600;
+    color: #d6336c;
+}
+
+/* Dropdown Arrow */
+.activity-section .dropdown-arrow {
+    color: #d6336c;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.activity-section .dropdown-arrow:hover {
+    color: #ff4d6d;
+    transform: scale(1.1);
+}
+
+/* Details Section */
+.activity-section .details-divider {
+    border-color: rgba(214, 51, 108, 0.2);
+    margin: 1rem 0;
+}
+
+.activity-section .details-title {
+    color: #d6336c;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Order Details */
+.activity-section .items-list {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.activity-section .item-entry {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0;
+    color: #333;
+}
+
+.activity-section .item-bullet {
+    color: #ff85a2;
+    font-size: 0.5rem;
+}
+
+.activity-section .order-summary {
+    text-align: right;
+    color: #d6336c;
+    font-size: 1.1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Service & Message Details */
+.activity-section .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f1f2f6;
+}
+
+.activity-section .info-row:last-child {
+    border-bottom: none;
+}
+
+.activity-section .info-label {
+    font-weight: 600;
+    color: #666;
+    min-width: 120px;
+}
+
+.activity-section .info-value {
+    color: #333;
+    text-align: right;
+    flex: 1;
+}
+
+.activity-section .message-text {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 0.5rem;
+    color: #333;
+    line-height: 1.5;
+}
+
+.activity-section .no-activity-card {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(214, 51, 108, 0.1);
+}
+
+.activity-section .no-activity-card i {
+    font-size: 4rem;
+    color: #ff85a2;
+    margin-bottom: 1rem;
+}
+
+.activity-section .no-activity-card h4 {
+    color: #d6336c;
+    font-family: 'Pacifico', cursive;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .activity-section .activity-card {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .activity-section .activity-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+    
+    .activity-section .header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .activity-section .activity-meta {
+        align-items: flex-start;
+    }
+    
+    .activity-section .info-row {
+        flex-direction: column;
+        gap: 0.25rem;
+        align-items: flex-start;
+    }
+    
+    .activity-section .info-value {
+        text-align: left;
+    }
+}
+
+@media (max-width: 480px) {
+    .activity-section .activity-card {
+        padding: 1rem;
+    }
+    
+    .activity-section .activity-header:hover {
+        padding: 0.5rem;
+    }
+}
+</style>
+{% endblock %}
